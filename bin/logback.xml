@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 30초마다 설정 파일의 변경을 확인한다. 파일이 변경되면 다시 로딩한다 -->
+<configuration scan="true" scanPeriod="30 seconds">
+
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<!-- To enable JMX Management -->
+	<jmxConfigurator />
+
+	<!-- 외부 설정파일을 사용할 수 있다. -->
+	<!-- <property resource="resource.properties"/> -->
+	<property name="B2NAME" value="ppto-panopto-online-attendance" />
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>../../../logs/plugins/${B2NAME}/${B2NAME}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 파일이 하루에 한개씩 생성된다 -->
+			<fileNamePattern>../../../logs/plugins/${B2NAME}/${B2NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>			
+			<!-- maxHIstory 설정은 위 부분에 롤링 정책에 따라 적용되 된다고 보면된다. 위 설정데로 라면 30일이 지난 파일은 삭제가 된다. -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="scheduleJob-file" class="ch.qos.logback.core.FileAppender">
+		<file>../../../logs/plugins/${B2NAME}/scheduleJob.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 파일이 하루에 한개씩 생성된다 -->
+			<fileNamePattern>../../../logs/plugins/${B2NAME}/scheduleJob.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- maxHIstory 설정은 위 부분에 롤링 정책에 따라 적용되 된다고 보면된다. 위 설정데로 라면 30일이 지난 파일은 삭제가 된다. -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>		
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="org.springframework">
+		<level value="ERROR" />
+	</logger>
+
+	<logger name="com.*">
+		<level value="ERROR" />
+	</logger>
+
+	<!-- additivity=false ensures analytics data only goes to the analytics 
+		log -->
+	<logger name="scheduleJob" level="info" additivity="false">
+		<appender-ref ref="scheduleJob-file" />
+	</logger>
+
+	<root level="ERROR">
+		<appender-ref ref="FILE" />
+	</root>
+
+</configuration>

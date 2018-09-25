@@ -1,0 +1,87 @@
+<schema comment="BBLEARN">
+	<table name="ppto_online_contents">
+		<comment>the data table of ppto_online_contents</comment>
+		<column name="pk1" data-type="int" nullable="false" identity="true" />
+		<column name="user_id" data-type="nvarchar(50)" nullable="false" />
+		<column name="content_pk1" data-type="int" nullable="true" />
+		<column name="course_pk1" data-type="int" nullable="true" />
+		<column name="course_id" data-type="nvarchar(max)" nullable="false" />
+		<column name="title" data-type="nvarchar(max)" nullable="false" />
+		<column name="url" data-type="nvarchar(max)" nullable="true" />
+		<column name="duration" data-type="float" nullable="false" />
+		<column name="minimumTime" data-type="float" nullable="true" />
+		<column name="toc_pk1" data-type="int" nullable="true" />
+		<column name="folder_pk1" data-type="int" nullable="true" />
+		<column name="start_date" data-type="datetime" nullable="true" />
+		<column name="end_date" data-type="datetime" nullable="true" />
+		<primary-key name="ppto_online_contents_pk1">
+			<columnref name="pk1" />
+		</primary-key>
+	</table>
+
+	<table name="ppto_online_users">
+		<comment>the data table of ppto_online_users</comment>
+		<column name="pk1" data-type="int" nullable="false" identity="true" />
+		<column name="online_content_pk1" data-type="int" nullable="true" />
+		<column name="panopto_session_id" data-type="nvarchar(50)" nullable="true" />
+		<column name="user_id" data-type="nvarchar(50)" nullable="false" />
+		<column name="cumulative_time" data-type="float" nullable="true" />
+		<column name="last_seen_time" data-type="float" nullable="true" />
+		<column name="page" data-type="int" nullable="true" />
+		<column name="percentage" data-type="float" nullable="true" />
+		<column name="pass" data-type="int" nullable="true" />
+		<column name="course_id" data-type="nvarchar(max)" nullable="true" />
+		<primary-key name="ppto_online_users_pk1">
+			<columnref name="pk1" />
+		</primary-key>
+	</table>
+	
+	
+	<table name="ppto_online_panopto">
+		<comment>the data table of ppto_online_panopto</comment>
+		<column name="pk1" data-type="int" nullable="false" identity="true" />
+		<column name="panopto_user_id" data-type="nvarchar(50)" nullable="false" />
+		<column name="user_id" data-type="nvarchar(50)" nullable="false" />		
+		<column name="user_pk1" data-type="int" nullable="true" />
+		<primary-key name="ppto_online_panopto_pk1">
+			<columnref name="pk1" />
+		</primary-key>
+	</table>
+	
+	
+	<table name="ppto_online_users_watching">
+		<comment>the data table of ppto_online_users_watching</comment>
+		<column name="pk1" data-type="int" nullable="false" identity="true" />
+		<column name="online_content_pk1" data-type="int" nullable="true" />
+		<column name="panopto_session_id" data-type="nvarchar(50)" nullable="true" />
+		<column name="user_id" data-type="nvarchar(50)" nullable="true" />
+		<column name="watching_date" data-type="datetime" nullable="false" />
+		<column name="watching_time" data-type="float" nullable="false" />
+		<column name="watching_start" data-type="float" nullable="false" />
+		<primary-key name="ppto_online_users_watching_pk1">
+			<columnref name="pk1" />
+		</primary-key>
+		 <foreign-key name="ppto_online_users_watching_FK" reference-table="ppto_online_contents"
+     			 comment="This is a Foreign Key referencing the primary key of the ppto_online_contents table. ">
+           <columnref name="online_content_pk1" />
+     </foreign-key> 
+	</table>
+	
+	
+	<table name="ppto_online_week">
+		<comment>the data table of ppto_online_week</comment>
+		<column name="pk1" data-type="int" nullable="false" identity="true" />
+		<column name="term_pk1" data-type="int" nullable="false" />
+		<column name="week" data-type="int" nullable="true" />
+		<column name="start_date" data-type="datetime" nullable="true" />
+		<column name="end_date" data-type="datetime" nullable="true" />
+		<primary-key name="ppto_online_week_pk1">
+			<columnref name="pk1" />
+		</primary-key>
+		<foreign-key name="ppto_online_week_FK" reference-table="term"
+     			 comment="This is a Foreign Key referencing the primary key of the term table. ">
+           <columnref name="term_pk1" />
+     	</foreign-key> 	
+	</table>
+	
+</schema>

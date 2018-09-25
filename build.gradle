@@ -1,0 +1,86 @@
+apply plugin: "war"
+apply plugin: "maven"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: 'java'
+	tasks.withType(Compile) {
+	options.encoding = 'UTF-8'
+}
+
+
+// Uncomment if your project has an API JAR
+//apply from: "api.gradle"
+
+// define the version for the project when publishing to maven
+group "bbdn"
+version "1.0-SNAPSHOT"
+
+project.ext {
+  	learnVersion = "9.1.201410.160373"
+  	deployServer = "106.247.231.5:8080"
+  	deployInstance = "BBLEARN"
+}
+
+repositories {
+  	mavenCentral()
+  	maven {
+    		url "https://maven.blackboard.com/content/repositories/releases/"
+  	}
+}
+
+configurations {
+  	buildUtils
+}
+
+configurations.all {
+   	exclude group: "commons-logging", module: "commons-logging"
+}
+
+// define the project's dependencies
+dependencies {
+  	providedCompile "javax.servlet:servlet-api:2.5",
+                  	"javax.servlet.jsp:jsp-api:2.1"
+
+  	// Dependencies are libraries needed to build, but should not be included in the B2 WAR.
+  	// You should NEVER include Learn JARs (other than webapis) in your B2.
+  	providedCompile( "blackboard.platform:bb-platform:$project.ext.learnVersion" ) { transitive = false }
+  	providedCompile( "blackboard.platform:bb-taglibs:$project.ext.learnVersion" ) { transitive = false }
+  	providedCompile( "blackboard.platform:bb-cms-admin:$project.ext.learnVersion" ) { transitive = false }
+  	providedCompile( "blackboard.platform:bb-ws-gradebook:$project.ext.learnVersion" ) { transitive = false }
+ 
+  	compile 'org.slf4j:jcl-over-slf4j:1.7.12'
+  	compile 'ch.qos.logback:logback-classic:1.1.3'
+  	compile 'org.springframework:spring-webmvc:4.1.6.RELEASE'
+  	compile 'javax.servlet:jstl:1.2'
+  	compile 'net.sf.json-lib:json-lib:2.4:jdk15'
+  	compile group: 'wsdl4j', name: 'wsdl4j', version: '1.6.2'
+  	
+
+  	compile files("/Users/kimjuneyoung/Desktop/lib/axis.jar")
+  	compile files("/Users/kimjuneyoung/Desktop/lib/commons-discovery-0.4.jar")
+	compile files("/Users/kimjuneyoung/Desktop/lib/commons-io-2.4.jar")
+	compile files("/Users/kimjuneyoung/Desktop/lib/CourseSearch.jar")
+	compile files("/Users/kimjuneyoung/Desktop/lib/javax.xml.rpc-api.jar")
+	compile files("/Users/kimjuneyoung/Desktop/lib/jstl-1.2.jar")
+
+  	// Building a Spring B2?  Use our Spring APIs!
+  	// compile "blackboard.platform:bb-spring-webapi:10.1"
+
+  	// Include the Blackboard security APIs for protecting your B2.
+  	// providedCompile "blackboard.plugin:security:1.0:api"
+
+  	// Dependencies that are only necessary at runtime so should be included in the WAR
+  	// runtime "org.javassist:javassist:3.17.1-GA"
+
+  	buildUtils "org.oscelot:b2deploy-task:0.1.0"
+}
+
+// Add a task to deploy a B2 using starting block
+task deployB2( dependsOn: "war" ) << {
+	ant.taskdef( name: "b2deploy", classname: "org.oscelot.ant.B2DeployTask", classpath: project.configurations.buildUtils.asPath )
+    ant.b2deploy( localfilepath: project.war.archivePath, host: project.ext.deployServer, courseorgavailable: 'true', clean: 'true', webappName: 'bb-starting-block-' + project.ext.deployInstance )
+}
+
+task wrapper(type: Wrapper) {
+  	gradleVersion = '1.8'
+}
